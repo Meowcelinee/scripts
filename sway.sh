@@ -43,6 +43,8 @@ function symlinks {
      sleep 3
 }
 
+clear
+
 echo -e "\n${WHITE}${bold}This script will automatically install & configure the SwayFX window manager and all programs required by it.\n${TEXT}${normal}" && echo
 sleep 5 && cd
 

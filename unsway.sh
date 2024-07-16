@@ -41,6 +41,7 @@ unsymlink() {
     sleep 3
 }
 
+clear
 
 echo -e "\n${WHITE}${bold}This script will automatically uninstall the SwayFX window manager and all programs it requires.\n\nIf you ever want to reinstall SwayFX, simply run the \"sway.sh\" script again.\n${TEXT}${normal}" && echo
 sleep 8 && cd
