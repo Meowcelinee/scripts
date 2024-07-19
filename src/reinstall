@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sudo pacman -R --noconfirm $1 && sudo pacman -S --noconfirm $1
