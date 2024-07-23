@@ -1,10 +1,25 @@
 #!/usr/bin/env bash
 
-for i in *;
+RED="\033[31m"
+GREEN="\033[32m"
+TEXT="\033[0;39m"
+
+echo ""
+
+for dir in *
 do
-	cd $i
-	git pull --rebase
-	cd ..
+	if [ -d $dir/.git ]
+	then
+		cd $dir
+		echo -e "Syncing ${dir}..."
+		git pull --rebase
+		echo ""
+		cd ..
+		sleep 0.8
+	else
+		echo -e "${RED}ERROR:${TEXT} Unable to sync ${dir}; not a git repository.\n"
+		sleep 0.8
+	fi
 done
 
-echo -e "\nAll repositories synced."
+echo -e "\n${GREEN}All repositories synced.${TEXT}\n"
