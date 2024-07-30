@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
-BLACK="\033[30m"
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
-BLUE="\033[34m"
-PINK="\033[35m"
-CYAN="\033[36m"
-WHITE="\033[37m"
 TEXT="\033[0;39m"
 bold=$(tput bold)
 normal=$(tput sgr0)
@@ -18,7 +13,8 @@ clear
 echo -e "yt-dlp version $version"
 echo -e "script written by Natalie Raine :3\n"
 
-echo -e "${bold}Paste the playlist URL (ctrl+shift+V):${normal}"
+echo -e "${bold}Paste the playlist URL (ctrl+shift+V):"
+echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com.${TEXT}${normal}"
 read URL && sleep 0.05
 
 if [ ! $URL ]
