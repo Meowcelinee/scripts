@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+TEXT="\033[0;39m"
+bold=$(tput bold)
+normal=$(tput sgr0)
+version=$(yt-dlp --version)
+
+clear
+
+echo -e "yt-dlp version $version"
+echo -e "script by https://github.com/Nyatalieeee :3\n\n"
+
+# check if program does *not* exist
+if ! command -v yt-dlp &> /dev/null
+then
+    clear
+    echo -e "yt-dlp is not currently installed."
+    read -p "Would you like to install it now? [y/n] " -n 1 -r
+
+    # check if user wants to install the program
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo -e "\nInstalling yt-dlp..." ; sleep 0.45
+        if [ -f /etc/os-release ]
+        then
+            # use os-release to check which distro the user has installed
+            # (i may have dramaticized this)
+            echo -e "\nDetecting distribution..." ; sleep 0.35
+            . /etc/os-release
+            echo -e "${GREEN}Distribution found.${TEXT}" ; sleep 0.2
+            echo -e "\nBeginning yt-dlp installation for ${bold}$NAME${normal}..." ; sleep 0.3
+            case "$NAME" in
+                "Alpine Linux")
+                    doas apk -U add yt-dlp
+                    ;;
+                "Arch Linux" | "EndeavourOS" | "ArcoLinux" | "Manjaro Linux")
+                    sudo pacman -S --noconfirm yt-dlp
+                    ;;
+                "Debian GNU/Linux" | "Ubuntu" | "Linux Mint" | "Pop!_OS" | "Raspbian GNU/Linux")
+                    # fuck u apt
+                    sudo add-apt-repository ppa:tomtomtom/yt-dlp
+                    sudo apt update
+                    sudo apt -y install yt-dlp
+                    ;;
+                "Fedora" | "Red Hat Enterprise Linux")
+                    sudo dnf install --assumeyes yt-dlp
+                    ;;
+                "Gentoo" | "Slackware" | "NixOS")
+                    # and fuck these distros
+                    echo -e "${YELLOW}${bold}\nNo.\n${TEXT}${normal}"
+                    exit 1
+            esac
+            # checks one more time if program is installed, in case install failed
+            if ! command -v yt-dlp &> /dev/null
+            then
+                echo -e "\n${RED}${bold}Installation failed. Manual intervention may be required.${TEXT}${normal}\n"
+                echo -e "Aborting...\n"
+                exit 1
+            else
+                echo -e "\n\n${GREEN}${bold}yt-dlp successfully installed!${TEXT}${normal}\n\n" ; sleep 1
+            fi
+        else
+            # some non-systemd distros don't have /etc/os-release. this part speaks for itself
+            echo -e "\ncome back when you're using a normal distro"
+            exit 1
+        fi
+    else
+        # if user doesn't want to install the program
+        echo -e "\nExiting..."
+        exit 1
+    fi
+fi
+
+echo -e "${bold}Paste the playlist URL (ctrl+shift+V):\n"
+echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com."
+echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${normal}"
+read URL && sleep 0.05
+
+if [ ! $URL ]
+then
+    echo -e "${RED}${bold}ERROR:${TEXT} You need to input a playlist URL.${normal}"
+    exit 1
+fi
+
+echo -e "\n\n${bold}Enter the directory to download to:\n"
+echo -e "${YELLOW}NOTE: Path must be relative to your home directory.\nExample: 'Music/playlist' INSTEAD OF '$HOME/Music/playlist'${TEXT}${normal}"
+read DIR_NAME && sleep 0.05
+
+if [ ! $DIR_NAME ]
+then
+    echo -e "${RED}${bold}ERROR:${TEXT} You need to input a download directory.${normal}"
+    exit 1
+fi
+
+cd $HOME
+echo -e "${GREEN}${bold}"
+mkdir -pv $DIR_NAME
+echo -e "${TEXT}${normal}"
+
+echo -ne "${bold}Beginning download.\r" && sleep 1
+echo -ne "Beginning download..\r" && sleep 1
+echo -ne "Beginning download...\r${normal}" && sleep 1.25 && echo -e "\n"
+
+yt-dlp --yes-playlist --newline --extract-audio --windows-filenames --audio-format mp3 --audio-quality 3 -P home:$DIR_NAME -o '%(title)s.%(ext)s' $URL
+
+sleep 0.4
+
+echo -e "\n${GREEN}${bold}Download complete!"
+echo -e "Contents can be found in ${HOME}/${DIR_NAME}${TEXT}${normal}\n"
