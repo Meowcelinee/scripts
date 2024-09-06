@@ -8,6 +8,15 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 version=$(yt-dlp --version)
 
+unsupportedDistro() {
+    echo -e "\n---------------"
+    echo -e "${YELLOW}${bold}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}"
+    echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${normal}"
+    echo -e "---------------\n"
+    sleep 0.05
+    exit 1
+}
+
 clear
 
 echo -e "yt-dlp version $version"
@@ -28,10 +37,10 @@ then
         then
             # use os-release to check which distro the user has installed
             # (i may have dramaticized this)
-            echo -e "\nDetecting distribution..." ; sleep 0.35
+            echo -e "\nDetecting distribution..." ; sleep 1.15
             . /etc/os-release
-            echo -e "${GREEN}Distribution found.${TEXT}" ; sleep 0.2
-            echo -e "\nBeginning yt-dlp installation for ${bold}$NAME${normal}..." ; sleep 0.3
+            echo -e "${GREEN}Distribution found.${TEXT}"
+            echo -e "\nInstalling yt-dlp for ${bold}$NAME${normal}..." ; sleep 0.4
             case "$NAME" in
                 "Alpine Linux")
                     doas apk -U add yt-dlp
@@ -45,12 +54,12 @@ then
                     sudo apt update
                     sudo apt -y install yt-dlp
                     ;;
-                "Fedora" | "Red Hat Enterprise Linux")
+                "Fedora Linux" | "Red Hat Enterprise Linux")
                     sudo dnf install --assumeyes yt-dlp
                     ;;
                 "Gentoo" | "Slackware" | "NixOS")
                     # and fuck these distros
-                    echo -e "${YELLOW}${bold}\nNo.\n${TEXT}${normal}"
+                    unsupportedDistro
                     exit 1
             esac
             # checks one more time if program is installed, in case install failed
@@ -60,11 +69,11 @@ then
                 echo -e "Aborting...\n"
                 exit 1
             else
-                echo -e "\n\n${GREEN}${bold}yt-dlp successfully installed!${TEXT}${normal}\n\n" ; sleep 1
+                echo -e "\n\n${GREEN}${bold}yt-dlp successfully installed!${TEXT}${normal}\n\n" ; sleep 2.5
             fi
         else
-            # some non-systemd distros don't have /etc/os-release. this part speaks for itself
-            echo -e "\ncome back when you're using a normal distro"
+            # some non-systemd distros don't have /etc/os-release
+            unsupportedDistro
             exit 1
         fi
     else
