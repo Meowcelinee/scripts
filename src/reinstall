@@ -1,3 +1,15 @@
 #!/usr/bin/env bash
 
-sudo pacman -R --noconfirm $1 && sudo pacman -S --noconfirm $1
+. /etc/os-release
+
+case "$NAME" in
+    "Arch Linux" | "EndeavourOS" | "ArcoLinux" | "Manjaro Linux")
+        sudo pacman -R --noconfirm $1 && sudo pacman -S --noconfirm $1
+        ;;
+    "Debian GNU/Linux" | "Ubuntu" | "Linux Mint" | "Pop!_OS" | "Raspbian GNU/Linux")
+        sudo apt remove -y $1 && sudo apt install -y $1
+        ;;
+    "Fedora Linux" | "Red Hat Enterprise Linux")
+        sudo dnf remove --assumeyes $1 && sudo dnf install --assumeyes $1
+        ;;
+esac
