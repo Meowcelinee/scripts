@@ -4,17 +4,28 @@ RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 TEXT="\033[0;39m"
-bold=$(tput bold)
-normal=$(tput sgr0)
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
 version=$(yt-dlp --version)
+
+NAME=unknown
 
 unsupportedDistro() {
     echo -e "\n---------------"
-    echo -e "${YELLOW}${bold}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}"
-    echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${normal}"
+    echo -e "${YELLOW}${BOLD}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}"
+    echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${NORMAL}"
     echo -e "---------------\n"
-    sleep 0.05
-    exit 1
+    sleep 0.05 ; exit 1
+}
+
+unknownDistro() {
+    sleep 2 ; echo ; sleep 0.7
+    echo -e "---------------"
+    echo -e "${RED}${BOLD}ERROR: Unable to detect distribution.${TEXT}"
+    echo -e "${TEXT}The distribution you are using does not support automatic installation.\n"
+    echo -e "${YELLOW}Manual intervention may be required.${NORMAL}"
+    echo -e "---------------\n"
+    sleep 0.05 ; exit 1
 }
 
 clear
@@ -39,37 +50,46 @@ then
             # (i may have dramaticized this)
             echo -e "\nDetecting distribution..." ; sleep 1.15
             . /etc/os-release
-            echo -e "${GREEN}Distribution found.${TEXT}"
-            echo -e "\nInstalling yt-dlp for ${bold}$NAME${normal}..." ; sleep 0.4
             case "$NAME" in
                 "Alpine Linux")
+                    echo -e "${GREEN}Distribution found.${TEXT}"
+                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
                     doas apk -U add yt-dlp
                     ;;
                 "Arch Linux" | "EndeavourOS" | "ArcoLinux" | "Manjaro Linux")
+                    echo -e "${GREEN}Distribution found.${TEXT}"
+                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
                     sudo pacman -S --noconfirm yt-dlp
                     ;;
                 "Debian GNU/Linux" | "Ubuntu" | "Linux Mint" | "Pop!_OS" | "Raspbian GNU/Linux")
+                    echo -e "${GREEN}Distribution found.${TEXT}"
+                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
                     # fuck u apt
                     sudo add-apt-repository ppa:tomtomtom/yt-dlp
                     sudo apt update
                     sudo apt -y install yt-dlp
                     ;;
                 "Fedora Linux" | "Red Hat Enterprise Linux")
+                    echo -e "${GREEN}Distribution found.${TEXT}"
+                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
                     sudo dnf install --assumeyes yt-dlp
                     ;;
                 "Gentoo" | "Slackware" | "NixOS")
                     # and fuck these distros
                     unsupportedDistro
                     exit 1
+                    ;;
+                "unknown")
+                    unknownDistro
             esac
             # checks one more time if program is installed, in case install failed
             if ! command -v yt-dlp &> /dev/null
             then
-                echo -e "\n${RED}${bold}Installation failed. Manual intervention may be required.${TEXT}${normal}\n"
+                echo -e "\n\n${RED}${BOLD}Installation failed. Manual intervention may be required.${TEXT}${NORMAL}\n"
                 echo -e "Aborting...\n"
                 exit 1
             else
-                echo -e "\n\n${GREEN}${bold}yt-dlp successfully installed!${TEXT}${normal}\n\n" ; sleep 2.5
+                echo -e "\n\n${GREEN}${BOLD}yt-dlp successfully installed!${TEXT}${NORMAL}\n\n" ; sleep 2.5
             fi
         else
             # some non-systemd distros don't have /etc/os-release
@@ -83,39 +103,41 @@ then
     fi
 fi
 
-echo -e "${bold}Paste the playlist URL (ctrl+shift+V):\n"
+echo -e "${BOLD}Paste the playlist URL (ctrl+shift+V):\n"
 echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com."
-echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${normal}"
+echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${NORMAL}"
 read URL && sleep 0.05
 
 if [ ! $URL ]
 then
-    echo -e "${RED}${bold}ERROR:${TEXT} You need to input a playlist URL.${normal}"
+    echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a playlist URL.${NORMAL}"
     exit 1
 fi
 
-echo -e "\n\n${bold}Enter the directory to download to:\n"
-echo -e "${YELLOW}NOTE: Path must be relative to your home directory.\nExample: 'Music/playlist' INSTEAD OF '$HOME/Music/playlist'${TEXT}${normal}"
+echo -e "\n\n${BOLD}Enter the directory to download to:\n"
+echo -e "${YELLOW}NOTE: Path must be relative to your home directory.\nExample: 'Music/playlist' INSTEAD OF '$HOME/Music/playlist'${TEXT}${NORMAL}"
 read DIR_NAME && sleep 0.05
 
 if [ ! $DIR_NAME ]
 then
-    echo -e "${RED}${bold}ERROR:${TEXT} You need to input a download directory.${normal}"
+    echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a download directory.${NORMAL}"
     exit 1
 fi
 
 cd $HOME
-echo -e "${GREEN}${bold}"
+echo -e "${GREEN}${BOLD}"
 mkdir -pv $DIR_NAME
-echo -e "${TEXT}${normal}"
+echo -e "${TEXT}${NORMAL}"
 
-echo -ne "${bold}Beginning download.\r" && sleep 1
+echo -ne "${BOLD}Beginning download.\r" && sleep 1
 echo -ne "Beginning download..\r" && sleep 1
-echo -ne "Beginning download...\r${normal}" && sleep 1.25 && echo -e "\n"
+echo -ne "Beginning download...\r${NORMAL}" && sleep 1.25 && echo -e "\n"
 
 yt-dlp --yes-playlist --newline --extract-audio --windows-filenames --audio-format mp3 --audio-quality 3 -P home:$DIR_NAME -o '%(title)s.%(ext)s' $URL
 
 sleep 0.4
 
-echo -e "\n${GREEN}${bold}Download complete!"
-echo -e "Contents can be found in ${HOME}/${DIR_NAME}${TEXT}${normal}\n"
+echo -e "\n${GREEN}${BOLD}Download complete!"
+echo -e "Contents can be found in ${HOME}/${DIR_NAME}${TEXT}${NORMAL}\n"
+
+exit 0
