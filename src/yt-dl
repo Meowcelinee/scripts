@@ -12,8 +12,8 @@ NAME=unknown
 
 unsupportedDistro() {
     echo -e "\n---------------"
-    echo -e "${YELLOW}${BOLD}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}"
-    echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${NORMAL}"
+    echo -e "${YELLOW}${BOLD}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}" | fold -s --width=$COLUMNS
+    echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${NORMAL}" | fold -s --width=$COLUMNS
     echo -e "---------------\n"
     sleep 0.05 ; exit 1
 }
@@ -21,9 +21,9 @@ unsupportedDistro() {
 unknownDistro() {
     sleep 2 ; echo ; sleep 0.7
     echo -e "---------------"
-    echo -e "${RED}${BOLD}ERROR: Unable to detect distribution.${TEXT}"
-    echo -e "${TEXT}The distribution you are using does not support automatic installation.\n"
-    echo -e "${YELLOW}Manual intervention may be required.${NORMAL}"
+    echo -e "${RED}${BOLD}ERROR: Unable to detect distribution.${TEXT}" | fold -s --width=$COLUMNS
+    echo -e "${TEXT}The distribution you are using does not support automatic installation.\n" | fold -s --width=$COLUMNS
+    echo -e "${YELLOW}Manual intervention may be required.${NORMAL}" | fold -s --width=$COLUMNS
     echo -e "---------------\n"
     sleep 0.05 ; exit 1
 }
@@ -85,7 +85,7 @@ then
             # checks one more time if program is installed, in case install failed
             if ! command -v yt-dlp &> /dev/null
             then
-                echo -e "\n\n${RED}${BOLD}Installation failed. Manual intervention may be required.${TEXT}${NORMAL}\n"
+                echo -e "\n\n${RED}${BOLD}Installation failed. Manual intervention may be required.${TEXT}${NORMAL}\n" | fold -s --width=$COLUMNS
                 echo -e "Aborting...\n"
                 exit 1
             else
@@ -103,9 +103,9 @@ then
     fi
 fi
 
-echo -e "${BOLD}Paste the playlist URL (ctrl+shift+V):\n"
-echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com."
-echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${NORMAL}"
+echo -e "${BOLD}Paste the playlist URL (ctrl+shift+V)\n"
+echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com." 
+echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${NORMAL}" | fold -s --width=$COLUMNS
 read URL && sleep 0.05
 
 if [ ! $URL ]
@@ -114,8 +114,11 @@ then
     exit 1
 fi
 
-echo -e "\n\n${BOLD}Enter the directory to download to:\n"
-echo -e "${YELLOW}NOTE: Path must be relative to your home directory.\nExample: 'Music/playlist' INSTEAD OF '$HOME/Music/playlist'${TEXT}${NORMAL}"
+echo -e "\n------------------------------\n"
+
+echo -e "${BOLD}Enter the directory to download to.\n"
+echo -e "${YELLOW}EXAMPLES: ${NORMAL}${YELLOW}'Music/playlist-name', '$HOME/album-name', '/mnt/C/Users/$USER/Music'" | fold -s --width=$COLUMNS
+echo -e "\n${BOLD}NOTE: ${NORMAL}${YELLOW}If there's no prefix to the name (~, /, etc), it will default to using your home directory as root." | fold -s --width=$COLUMNS
 read DIR_NAME && sleep 0.05
 
 if [ ! $DIR_NAME ]
@@ -138,6 +141,6 @@ yt-dlp --yes-playlist --newline --extract-audio --windows-filenames --audio-form
 sleep 0.4
 
 echo -e "\n${GREEN}${BOLD}Download complete!"
-echo -e "Contents can be found in ${HOME}/${DIR_NAME}${TEXT}${NORMAL}\n"
+echo -e "Contents can be found in '${DIR_NAME}'${TEXT}${NORMAL}\n"
 
 exit 0
