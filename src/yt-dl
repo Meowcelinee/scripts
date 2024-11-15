@@ -10,7 +10,7 @@ version=$(yt-dlp --version)
 
 NAME=unknown
 
-unsupportedDistro() {
+function unsupportedDistro() {
     echo -e "\n---------------"
     echo -e "${YELLOW}${BOLD}The distro you're using ($NAME) is not currently supported for automatic installation.${TEXT}" | fold -s --width=$COLUMNS
     echo -e "You can visit https://github.com/yt-dlp/yt-dlp/wiki/Installation to install it manually.${NORMAL}" | fold -s --width=$COLUMNS
@@ -18,7 +18,7 @@ unsupportedDistro() {
     sleep 0.05 ; exit 1
 }
 
-unknownDistro() {
+function unknownDistro() {
     sleep 2 ; echo ; sleep 0.7
     echo -e "---------------"
     echo -e "${RED}${BOLD}ERROR: Unable to detect distribution.${TEXT}" | fold -s --width=$COLUMNS
@@ -26,6 +26,41 @@ unknownDistro() {
     echo -e "${YELLOW}Manual intervention may be required.${NORMAL}" | fold -s --width=$COLUMNS
     echo -e "---------------\n"
     sleep 0.05 ; exit 1
+}
+
+function failedInstall() {
+    echo -e "\n\n${RED}${BOLD}Installation failed. Manual intervention may be required.${TEXT}${NORMAL}\n" | fold -s --width=$COLUMNS
+    echo -e "${BOLD}Help with installation can be found at https://github.com/yt-dlp/yt-dlp/wiki/Installation.\n"
+    echo -e "Aborting...\n"
+    exit 1
+}
+
+function getUrl() {
+    read URL && sleep 0.05
+
+    if [ ! $URL ]
+    then
+        echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a playlist URL.${NORMAL}"
+        exit 1
+    fi
+}
+
+function getDirName() {
+    read DIR_NAME && sleep 0.05
+
+    if [[ $DIR_NAME == *"~"* ]]
+    then
+        echo -e "\n${RED}${BOLD}WARNING:${TEXT} Directory name ${BOLD}CANNOT${NORMAL} contain a '~'.${NORMAL}\n"
+        echo -e "${BOLD}Please re-enter the download directory:"
+        getDirName
+        return 0
+    fi
+
+    if [ ! $DIR_NAME ]
+    then
+        echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a download directory.${NORMAL}"
+        exit 1
+    fi
 }
 
 clear
@@ -85,9 +120,7 @@ then
             # checks one more time if program is installed, in case install failed
             if ! command -v yt-dlp &> /dev/null
             then
-                echo -e "\n\n${RED}${BOLD}Installation failed. Manual intervention may be required.${TEXT}${NORMAL}\n" | fold -s --width=$COLUMNS
-                echo -e "Aborting...\n"
-                exit 1
+                failedInstall
             else
                 echo -e "\n\n${GREEN}${BOLD}yt-dlp successfully installed!${TEXT}${NORMAL}\n\n" ; sleep 2.5
             fi
@@ -106,26 +139,14 @@ fi
 echo -e "${BOLD}Paste the playlist URL (ctrl+shift+V)\n"
 echo -e "${YELLOW}NOTE: URL can be from youtube.com OR music.youtube.com." 
 echo -e "NOTE: YTM also counts full albums as playlists. Do what you will with this information${TEXT}${NORMAL}" | fold -s --width=$COLUMNS
-read URL && sleep 0.05
-
-if [ ! $URL ]
-then
-    echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a playlist URL.${NORMAL}"
-    exit 1
-fi
+getUrl
 
 echo -e "\n------------------------------\n"
 
 echo -e "${BOLD}Enter the directory to download to.\n"
 echo -e "${YELLOW}EXAMPLES: ${NORMAL}${YELLOW}'Music/playlist-name', '$HOME/album-name', '/mnt/C/Users/$USER/Music'" | fold -s --width=$COLUMNS
-echo -e "\n${BOLD}NOTE: ${NORMAL}${YELLOW}If there's no prefix to the name (~, /, etc), it will default to using your home directory as root." | fold -s --width=$COLUMNS
-read DIR_NAME && sleep 0.05
-
-if [ ! $DIR_NAME ]
-then
-    echo -e "${RED}${BOLD}ERROR:${TEXT} You need to input a download directory.${NORMAL}"
-    exit 1
-fi
+echo -e "\n${BOLD}NOTE: ${NORMAL}${YELLOW}If there's no forward slash ('/') as a prefix, it will default to using your home directory as the root folder.${TEXT}" | fold -s --width=$COLUMNS
+getDirName
 
 cd $HOME
 echo -e "${GREEN}${BOLD}"
