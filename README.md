@@ -1,6 +1,6 @@
 # bash my detested
 
-_(jk its not **that** bad)_
+yes it is, in fact, that bad
 
 a collection of scripts that ive written
 
