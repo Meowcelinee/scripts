@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+RED="\033[31m"
+GREEN="\033[32m"
+TEXT="\033[0;39m"
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+
+echo ""
+
+for project in *
+do
+    if [ ! -d $project/.git ]
+    then
+        echo -e "${BOLD}${RED}${project}: ${NORMAL}Not a git repository${TEXT}"
+    else
+        cd $project
+        echo -e "\n\n${BOLD}${GREEN}${project}:${NORMAL}"
+        git status
+        cd ..
+    fi
+    sleep 0.75
+done
