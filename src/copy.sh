@@ -10,7 +10,7 @@ echo ""
 
 for i in $DIR/*
 do
-    sleep 0.15
+    sleep 0.1
     ln -sfv $i ~/.local/bin/
 done
 
