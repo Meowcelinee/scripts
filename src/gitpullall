@@ -19,8 +19,9 @@ do
 		echo ""
 		cd ..
 	else
-		echo -e "${RED}ERROR:${TEXT} Unable to sync ${dir}; not a git repository.\n"
-		sleep 0.8
+		echo -e "${bold}${dir}:${normal}"
+		echo -e "${RED}Not a git repository.${normal}\n"
+		sleep 0.5
 	fi
 done
 
