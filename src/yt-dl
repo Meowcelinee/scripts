@@ -66,7 +66,7 @@ function getDirName() {
 clear
 
 echo -e "yt-dlp version $version"
-echo -e "script by https://github.com/Nyatalieeee :3\n\n"
+echo -e "script by https://github.com/Meowcelinee :3\n\n"
 
 # check if program does *not* exist
 if ! command -v yt-dlp &> /dev/null
