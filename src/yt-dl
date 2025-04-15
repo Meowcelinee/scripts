@@ -76,63 +76,64 @@ then
     read -p "Would you like to install it now? [y/n] " -n 1 -r
 
     # check if user wants to install the program
-    if [[ $REPLY =~ ^[Yy]$ ]]
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
     then
-        echo -e "\nInstalling yt-dlp..." ; sleep 0.45
-        if [ -f /etc/os-release ]
-        then
-            # use os-release to check which distro the user has installed
-            # (i may have dramaticized this)
-            echo -e "\nDetecting distribution..." ; sleep 1.15
-            . /etc/os-release
-            case "$NAME" in
-                "Alpine Linux")
-                    echo -e "${GREEN}Distribution found.${TEXT}"
-                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
-                    doas apk -U add yt-dlp
-                    ;;
-                "Arch Linux" | "EndeavourOS" | "ArcoLinux" | "Manjaro Linux")
-                    echo -e "${GREEN}Distribution found.${TEXT}"
-                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
-                    sudo pacman -S --noconfirm yt-dlp
-                    ;;
-                "Debian GNU/Linux" | "Ubuntu" | "Linux Mint" | "Pop!_OS" | "Raspbian GNU/Linux")
-                    echo -e "${GREEN}Distribution found.${TEXT}"
-                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
-                    # fuck u apt
-                    sudo add-apt-repository ppa:tomtomtom/yt-dlp
-                    sudo apt update
-                    sudo apt -y install yt-dlp
-                    ;;
-                "Fedora Linux" | "Red Hat Enterprise Linux")
-                    echo -e "${GREEN}Distribution found.${TEXT}"
-                    echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
-                    sudo dnf install --assumeyes yt-dlp
-                    ;;
-                "Gentoo" | "Slackware" | "NixOS")
-                    # and fuck these distros
-                    unsupportedDistro
-                    exit 1
-                    ;;
-                "unknown")
-                    unknownDistro
-            esac
-            # checks one more time if program is installed, in case install failed
-            if ! command -v yt-dlp &> /dev/null
-            then
-                failedInstall
-            else
-                echo -e "\n\n${GREEN}${BOLD}yt-dlp successfully installed!${TEXT}${NORMAL}\n\n" ; sleep 2.5
-            fi
-        else
-            # some non-systemd distros don't have /etc/os-release
-            unsupportedDistro
-            exit 1
-        fi
-    else
         # if user doesn't want to install the program
         echo -e "\nExiting..."
+        exit 0
+    fi
+
+    echo -e "\nInstalling yt-dlp..." ; sleep 0.45
+
+    if [ ! -f /etc/os-release ]
+    then
+        # some non-systemd distros don't have /etc/os-release
+        unsupportedDistro
         exit 1
+    fi
+
+    # use os-release to check which distro the user has installed
+    # (i may have dramaticized this)
+    echo -e "\nDetecting distribution..." ; sleep 1.15
+    . /etc/os-release
+    case "$NAME" in
+        "Alpine Linux")
+            echo -e "${GREEN}Distribution found.${TEXT}"
+            echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
+            doas apk -U add yt-dlp
+            ;;
+        "Arch Linux" | "EndeavourOS" | "ArcoLinux" | "Manjaro Linux")
+            echo -e "${GREEN}Distribution found.${TEXT}"
+            echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
+            sudo pacman -S --noconfirm yt-dlp
+            ;;
+        "Debian GNU/Linux" | "Ubuntu" | "Linux Mint" | "Pop!_OS" | "Raspbian GNU/Linux")
+            echo -e "${GREEN}Distribution found.${TEXT}"
+            echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
+            sudo add-apt-repository ppa:tomtomtom/yt-dlp
+            sudo apt update
+            sudo apt -y install yt-dlp
+            ;;
+        "Fedora Linux" | "Red Hat Enterprise Linux")
+            echo -e "${GREEN}Distribution found.${TEXT}"
+            echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
+            # sudo dnf install --assumeyes yt-dlp
+            ;;
+        "Gentoo" | "Slackware" | "NixOS")
+            # and fuck these distros
+            unsupportedDistro
+            exit 1
+            ;;
+        "unknown")
+            unknownDistro
+    esac
+
+    # checks one more time if program is installed, in case install failed
+    if ! command -v yt-dlp &> /dev/null
+    then
+        failedInstall
+    else
+        echo -e "\n\n${GREEN}${BOLD}yt-dlp successfully installed!${TEXT}${NORMAL}\n\n" ; sleep 2.5
     fi
 fi
 
