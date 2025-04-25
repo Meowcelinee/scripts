@@ -14,14 +14,13 @@ do
 	then
 		cd $dir
 		echo -e "${bold}${dir}:${normal}"
-		sleep 0.3
 		git pull --rebase
 		echo ""
 		cd ..
 	else
 		echo -e "${bold}${dir}:${normal}"
 		echo -e "${RED}Not a git repository.${normal}\n"
-		sleep 0.5
+		sleep 0.3
 	fi
 done
 
