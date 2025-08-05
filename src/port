@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+ACTION=$1
+PORT=$2
+LOCAL_IP=$(hostname -I)
+
+case $ACTION in
+    open)
+        echo -e "opening port $PORT on $LOCAL_IP..."
+        upnpc -a $LOCAL_IP $PORT $PORT tcp
+        exit 0
+        ;;
+    
+    close)
+        echo -e "closing port $PORT on $LOCAL_IP..."
+        upnpc -d $PORT tcp
+        exit 0
+        ;;
+    
+    *)
+        echo -e "unknown command.\nsyntax: \`port <open|close> <port>\`"
+        exit 1
+esac
