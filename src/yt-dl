@@ -117,7 +117,7 @@ then
         "Fedora Linux" | "Red Hat Enterprise Linux")
             echo -e "${GREEN}Distribution found.${TEXT}"
             echo -e "\nInstalling yt-dlp for ${BOLD}$NAME${NORMAL}...\n" ; sleep 0.4
-            # sudo dnf install --assumeyes yt-dlp
+            sudo dnf install --assumeyes yt-dlp
             ;;
         "Gentoo" | "Slackware" | "NixOS")
             # and fuck these distros
