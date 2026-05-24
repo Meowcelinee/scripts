@@ -6,15 +6,15 @@ LOCAL_IP=$(hostname -I)
 
 case $ACTION in
     open)
-	PUBLIC_IP=$(curl https://ipv4.icanhazip.com)
+		PUBLIC_IP=$(curl https://ipv4.icanhazip.com)
 
         echo -e "opening port $PORT on $LOCAL_IP..."
         upnpc -a $LOCAL_IP $PORT $PORT tcp
 
-	echo -e "\nPUBLIC IP:\n$PUBLIC_IP:$PORT"
-	echo -e "\nWEB ADDRESS:\nhttp://$PUBLIC_IP:$PORT"
+		echo -e "\nPUBLIC IP:\n$PUBLIC_IP:$PORT"
+		echo -e "\nWEB ADDRESS:\nhttp://$PUBLIC_IP:$PORT"
 
-	exit 0
+		exit 0
         ;;
 
     close)
